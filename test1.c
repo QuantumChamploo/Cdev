@@ -12,5 +12,6 @@ int main()
 	num += 1;
 	char lv3 = num;
 	printf("the next char is %c\n", lv3);
+	printf("The value is %d\n", lv3);
 
 }
