@@ -55,6 +55,9 @@ int n_in_a_row(int **board, int size) {
 			hld[j] = board[j][i];
 		}
 		if(check_array(hld, size) == 1){
+
+			free(hld);
+			hld = NULL;
 			return 1;
 		}
 	}
@@ -67,9 +70,19 @@ int n_in_a_row(int **board, int size) {
 
 	}
 	if(check_array(hld, size) == 1){
+
+		free(hld);
+		free(hld2);
+		hld = NULL;
+		hld2 = NULL;
 		return 1;
+		
 	}
 	if(check_array(hld2, size) == 1){
+		free(hld);
+		free(hld2);
+		hld = NULL;
+		hld2 = NULL;
 		return 1;
 	}
 
@@ -154,7 +167,14 @@ int main(int argc, char *argv[]) {
 
 
     //TODO: Free all dynamically allocated memory.
+    for(int i = 0; i < size; i++){
 
+    	free(m[i]);
+    	m[i] = NULL;
+
+    }
+    free(m);
+    m = NULL;
 
     //Close the file.
     if (fclose(fp) != 0) {
