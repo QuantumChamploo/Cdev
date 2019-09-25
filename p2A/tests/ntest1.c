@@ -22,7 +22,10 @@ void get_dimensions(FILE *fp, int *size) {
     token = strtok(line, COMMA);
     *size = atoi(token);
 }   
-
+/* Helper function that will look at an array, and see if there 
+a winner. Outputs 0 for no winner, 1 for x is a winner, 2 for o 
+is the winner
+*/
 int check_array(int* arr, int size){
 	if(*arr == 0){
 		return 0;
@@ -32,7 +35,14 @@ int check_array(int* arr, int size){
 			return 0;
 		}
 	}
-	return 1;
+
+	if(*arr == 1){
+		return 1;
+	}
+	if(*arr == 2){
+		return 2;
+	}
+    return 0;
 }
 
 /* TODO:
@@ -43,11 +53,18 @@ int check_array(int* arr, int size){
  * size: number of rows and columns
  */
 int n_in_a_row(int **board, int size) {
+	int x = 0;
+	int o = 0;
+    int x_win = 0;
+    int o_win = 0;
 	for(int i = 0; i < size; i++){
 
 		if(check_array(board[i], size) == 1){
-			return 1;
+			x_win++;
 		}
+        if(check_array(board[i], size) == 2){
+            o_win++;
+        }
 	}
 	for(int i = 0; i < size; i++){
 		int* hld = malloc(sizeof(int)*size);
@@ -56,10 +73,12 @@ int n_in_a_row(int **board, int size) {
 		}
 		if(check_array(hld, size) == 1){
 
-			free(hld);
-			hld = NULL;
-			return 1;
+			x_win++;
 		}
+        if(check_array(hld, size) == 2){
+
+            o_win++;
+        }
 	}
 	int* hld = malloc(sizeof(int)*size);
 	int* hld2 = malloc(sizeof(int)*size);
@@ -70,23 +89,46 @@ int n_in_a_row(int **board, int size) {
 
 	}
 	if(check_array(hld, size) == 1){
-
-		free(hld);
-		free(hld2);
-		hld = NULL;
-		hld2 = NULL;
-		return 1;
+        x_win++;
 		
 	}
+    if(check_array(hld, size) == 2){
+        o_win++;
+        
+    }
 	if(check_array(hld2, size) == 1){
-		free(hld);
-		free(hld2);
-		hld = NULL;
-		hld2 = NULL;
-		return 1;
-	}
 
-    return 0;   
+		x_win++;
+	}
+    if(check_array(hld2, size) == 2){
+
+        o_win++;
+    }
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            if(board[i][j] == 1){
+                x++;
+            }
+            if(board[i][j] == 2){
+                o++;
+            }
+        }
+    }
+    int total = (x - o);
+    if(total == 0 | total == 1){
+        if(x_win > 0 && o_win > 0){
+            return 0;
+        }
+        else{
+            return 1;
+        }
+    }
+    else{
+        return 0;
+    }
+
+
+
 }    
 
 
