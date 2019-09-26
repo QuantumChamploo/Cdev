@@ -27,15 +27,18 @@ a winner. Outputs 0 for no winner, 1 for x is a winner, 2 for o
 is the winner
 */
 int check_array(int* arr, int size){
+    // if the begining is empty, it cant be a winner
 	if(*arr == 0){
 		return 0;
 	}
+    //now loop through and see if everything is the same
 	for(int i = 1; i < size; i++){
 		if(*(arr + i) != *(arr + (i -1))){
 			return 0;
 		}
 	}
-
+    // if we got here then its a filled array. look at the first entry
+    // and return the appopriate type
 	if(*arr == 1){
 		return 1;
 	}
@@ -53,15 +56,23 @@ int check_array(int* arr, int size){
  * size: number of rows and columns
  */
 int n_in_a_row(int **board, int size) {
+    // we will use these to count later
 	int x = 0;
 	int o = 0;
+    // count the wins, and for which team
     int x_win = 0;
     int o_win = 0;
+    /* these will designate whether it is a row win or a col win. No 
+    need to distinguish betweeen o and x, as if both have a win
+    then it will be a fail anyway. Set to negative one as 0 will
+    designate a row */
     int row_win = -1;
     int col_win = -1;
+    // Now loop through each row and see if we have a winner. 
 	for(int i = 0; i < size; i++){
-
-
+        // note we will always check for a win on the other side 
+        // before awarding a point
+        // check x
 		if(check_array(board[i], size) == 1){
             if(o_win == 0){
                 if(row_win != -1){
@@ -75,8 +86,8 @@ int n_in_a_row(int **board, int size) {
             else{
                 return 0;
             }
-			
 		}
+        // check o
         if(check_array(board[i], size) == 2){
             if(x_win == 0){
                 if(row_win != -1){
@@ -92,7 +103,9 @@ int n_in_a_row(int **board, int size) {
             }
         }
 	}
+    // now go through the column
 	for(int i = 0; i < size; i++){
+        // we need to make the row arrays
 		int* hld = malloc(sizeof(int)*size);
 		for(int j = 0; j < size; j++){
 			*(hld + j) = *(*(board + j)+i);
