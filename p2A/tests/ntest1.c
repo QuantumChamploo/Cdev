@@ -57,13 +57,39 @@ int n_in_a_row(int **board, int size) {
 	int o = 0;
     int x_win = 0;
     int o_win = 0;
+    int row_win = -1;
+    int col_win = -1;
 	for(int i = 0; i < size; i++){
 
+
 		if(check_array(board[i], size) == 1){
-			x_win++;
+            if(o_win == 0){
+                if(row_win != -1){
+                    x_win++;
+                    row_win = i;
+                }
+                else{
+                    return 0;
+                }
+            }
+            else{
+                return 0;
+            }
+			
 		}
         if(check_array(board[i], size) == 2){
-            o_win++;
+            if(x_win == 0){
+                if(row_win != -1){
+                    o_win++;
+                    row_win = i;
+                }            
+                else{
+                    return 0;
+                }
+            }
+            else{
+                return 0;
+            }
         }
 	}
 	for(int i = 0; i < size; i++){
@@ -72,12 +98,36 @@ int n_in_a_row(int **board, int size) {
 			*(hld + j) = *(*(board + j)+i);
 		}
 		if(check_array(hld, size) == 1){
+            if(o_win == 0){
+                if(col_win != -1){
+                    x_win++;
+                    col_win = i;
 
-			x_win++;
+                }
+                else{
+                    return 0;
+                }
+            }
+            else{
+                return 0;
+            }
+
+			
 		}
         if(check_array(hld, size) == 2){
-
-            o_win++;
+            if(x_win == 0){
+                if(col_win != -1){
+                    o_win++;
+                    col_win = i;
+                }
+                else{
+                    return 0;
+                }
+            }
+            else{
+                return 0;
+            }
+            
         }
 	}
 	int* hld = malloc(sizeof(int)*size);
@@ -89,21 +139,94 @@ int n_in_a_row(int **board, int size) {
 
 	}
 	if(check_array(hld, size) == 1){
-        x_win++;
+        if(o_win == 0){
+
+            if(row_win == -1 | col_win == -1){
+
+                x_win++;
+                
+            }
+            else{
+                if(row_win == col_win){
+                    x_win++;
+                }
+                else{
+                    return 0;
+                }
+            }
+        }
+        else{
+            return 0;
+        }
 		
 	}
     if(check_array(hld, size) == 2){
-        o_win++;
+        if(x_win == 0){
+
+            if(row_win == -1 | col_win == -1){
+
+                o_win++;
+                
+            }
+            else{
+                if(row_win == col_win){
+                    o_win++;
+                }
+                else{
+                    return 0;
+                }
+            }
+        }
+        else{
+            return 0;
+        }
         
     }
-	if(check_array(hld2, size) == 1){
+    if(check_array(hld2, size) == 1){
+        if(o_win == 0){
 
-		x_win++;
-	}
-    if(check_array(hld2, size) == 2){
+            if(row_win == -1 | col_win == -1){
 
-        o_win++;
+                x_win++;
+                
+            }
+            else{
+                if(row_win == (size - 1 - col_win)){
+                    x_win++;
+                }
+                else{
+                    return 0;
+                }
+            }
+        }
+        else{
+            return 0;
+        }
+        
     }
+    if(check_array(hld2, size) == 2){
+        if(x_win == 0){
+
+            if(row_win == -1 | col_win == -1){
+
+                o_win++;
+                
+            }
+            else{
+                if(row_win == (size - 1 - col_win)){
+                    o_win++;
+                }
+                else{
+                    return 0;
+                }
+            }
+        }
+        else{
+            return 0;
+        }
+        
+    }    
+
     for(int i = 0; i < size; i++){
         for(int j = 0; j < size; j++){
             if(board[i][j] == 1){
@@ -115,8 +238,11 @@ int n_in_a_row(int **board, int size) {
         }
     }
     int total = (x - o);
-    if(total == 0 | total == 1){
-        if(x_win > 0 && o_win > 0){
+    if(total == 0){
+        return 1;
+    }
+    else if(total == 1){
+        if(o_win > 0){
             return 0;
         }
         else{
@@ -127,9 +253,10 @@ int n_in_a_row(int **board, int size) {
         return 0;
     }
 
+    
 
-
-}    
+}
+    
 
 
 
