@@ -122,10 +122,14 @@ int n_in_a_row(int **board, int size) {
 
                 }
                 else{
+                    free(hld);
+                    hld = NULL;
                     return 0;
                 }
             }
             else{
+                free(hld);
+                hld = NULL;
                 return 0;
             }
 
