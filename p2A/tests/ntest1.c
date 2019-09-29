@@ -73,7 +73,7 @@ int n_in_a_row(int **board, int size) {
         // note we will always check for a win on the other side 
         // before awarding a point
         // check x
-		if(check_array(board[i], size) == 1){
+		if(check_array(*(board + i), size) == 1){
             if(o_win == 0){
                 if(row_win != -1){
                     x_win++;
@@ -88,7 +88,7 @@ int n_in_a_row(int **board, int size) {
             }
 		}
         // check o
-        if(check_array(board[i], size) == 2){
+        if(check_array(*(board + i), size) == 2){
             if(x_win == 0){
                 if(row_win != -1){
                     o_win++;
@@ -143,14 +143,21 @@ int n_in_a_row(int **board, int size) {
             
         }
 	}
+    // now we make the diagonal arrays
+    // from top left to bottom right
 	int* hld = malloc(sizeof(int)*size);
+    // bottom left to top right
 	int* hld2 = malloc(sizeof(int)*size);
-
+    // fill them up
 	for(int i = 0; i < size; i++){
-		hld[i] = board[i][i];
-		hld2[i] = board[size - 1 - i][i];
+		//hld[i] = board[i][i];
+        *(hld + i) = *(*(board + i) +i);
+        *(hld2 + i) = *(*(board + size - 1 - i) +i);
+		//hld2[i] = board[size - 1 - i][i];
 
 	}
+    // check if they have a winner, with some extra logic
+    // to make sure that we are adding a valid winner
 	if(check_array(hld, size) == 1){
         if(o_win == 0){
 
@@ -164,11 +171,19 @@ int n_in_a_row(int **board, int size) {
                     x_win++;
                 }
                 else{
+                    free(hld);
+                    free(hld2);
+                    hld = NULL;
+                    hld2 = NULL;
                     return 0;
                 }
             }
         }
         else{
+            free(hld);
+            free(hld2);
+            hld = NULL;
+            hld2 = NULL;
             return 0;
         }
 		
@@ -186,11 +201,19 @@ int n_in_a_row(int **board, int size) {
                     o_win++;
                 }
                 else{
+                    free(hld);
+                    free(hld2);
+                    hld = NULL;
+                    hld2 = NULL;
                     return 0;
                 }
             }
         }
         else{
+            free(hld);
+            free(hld2);
+            hld = NULL;
+            hld2 = NULL;
             return 0;
         }
         
@@ -208,11 +231,19 @@ int n_in_a_row(int **board, int size) {
                     x_win++;
                 }
                 else{
+                    free(hld);
+                    free(hld2);
+                    hld = NULL;
+                    hld2 = NULL;
                     return 0;
                 }
             }
         }
         else{
+            free(hld);
+            free(hld2);
+            hld = NULL;
+            hld2 = NULL;
             return 0;
         }
         
@@ -230,30 +261,46 @@ int n_in_a_row(int **board, int size) {
                     o_win++;
                 }
                 else{
+                    free(hld);
+                    free(hld2);
+                    hld = NULL;
+                    hld2 = NULL;
                     return 0;
                 }
             }
         }
         else{
+            free(hld);
+            free(hld2);
+            hld = NULL;
+            hld2 = NULL;
             return 0;
         }
         
-    }    
-
+    }   
+    free(hld);
+    free(hld2);
+    hld = NULL;
+    hld2 = NULL; 
+    // now lets add up how many of each x's and o's there
+    // are so we know its valid 
     for(int i = 0; i < size; i++){
         for(int j = 0; j < size; j++){
-            if(board[i][j] == 1){
+            if(*(*(board + i) + j) == 1){
                 x++;
             }
-            if(board[i][j] == 2){
+            if(*(*(board + i) + j) == 2){
                 o++;
             }
         }
     }
+    // make a total
     int total = (x - o);
+    // if both equal then its fine
     if(total == 0){
         return 1;
     }
+    // only an x can win with more files
     else if(total == 1){
         if(o_win > 0){
             return 0;
@@ -266,7 +313,6 @@ int n_in_a_row(int **board, int size) {
         return 0;
     }
 
-    
 
 }
     
@@ -284,7 +330,9 @@ int n_in_a_row(int **board, int size) {
 int main(int argc, char *argv[]) {              
 
     //TODO: Check if number of command-line arguments is correct.
-
+    if(argc != 2){
+        exit(1);
+    }
 
     //Open the file and check if it opened successfully.
     FILE *fp = fopen(*(argv + 1), "r");
@@ -333,18 +381,20 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    for(int i = 0; i < size; i++){
-    	for(int j = 0; j < size; j++){
-    	//	printf("%d\n", m[i][j]);
-    	}
-    }
 
     //TODO: Call the function n_in_a_row and print the appropriate
     //output depending on the function's return value.
 
     int hld = n_in_a_row(m, size);
+    char *answer = malloc(256);
+    if(hld == 0){
+        strcpy(answer, "invalid");
+    }
+    if(hld == 1){
+        strcpy(answer, "valid");
+    }
 
-    printf("the output is %d\n", hld);
+    printf("the output is %s\n", answer);
 
 
 
