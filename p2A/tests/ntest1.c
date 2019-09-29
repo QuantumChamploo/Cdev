@@ -75,7 +75,7 @@ int n_in_a_row(int **board, int size) {
         // check x
 		if(check_array(*(board + i), size) == 1){
             if(o_win == 0){
-                if(row_win != -1){
+                if(row_win == -1){
                     x_win++;
                     row_win = i;
                 }
@@ -87,10 +87,11 @@ int n_in_a_row(int **board, int size) {
                 return 0;
             }
 		}
+        
         // check o
         if(check_array(*(board + i), size) == 2){
             if(x_win == 0){
-                if(row_win != -1){
+                if(row_win == -1){
                     o_win++;
                     row_win = i;
                 }            
@@ -102,7 +103,9 @@ int n_in_a_row(int **board, int size) {
                 return 0;
             }
         }
+
 	}
+    printf("through horizontal check\n");
     // now go through the column
 	for(int i = 0; i < size; i++){
         // we need to make the row arrays
@@ -111,8 +114,9 @@ int n_in_a_row(int **board, int size) {
 			*(hld + j) = *(*(board + j)+i);
 		}
 		if(check_array(hld, size) == 1){
+            printf("x check hor");
             if(o_win == 0){
-                if(col_win != -1){
+                if(col_win == -1){
                     x_win++;
                     col_win = i;
 
@@ -129,7 +133,7 @@ int n_in_a_row(int **board, int size) {
 		}
         if(check_array(hld, size) == 2){
             if(x_win == 0){
-                if(col_win != -1){
+                if(col_win == -1){
                     o_win++;
                     col_win = i;
                 }
@@ -143,6 +147,7 @@ int n_in_a_row(int **board, int size) {
             
         }
 	}
+    printf("through vertical check\n");
     // now we make the diagonal arrays
     // from top left to bottom right
 	int* hld = malloc(sizeof(int)*size);
@@ -296,6 +301,7 @@ int n_in_a_row(int **board, int size) {
     }
     // make a total
     int total = (x - o);
+    printf("the total is %d\n", total );
     // if both equal then its fine
     if(total == 0){
         return 1;
@@ -331,6 +337,7 @@ int main(int argc, char *argv[]) {
 
     //TODO: Check if number of command-line arguments is correct.
     if(argc != 2){
+        printf("improper number of args\n");
         exit(1);
     }
 
