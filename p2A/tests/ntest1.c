@@ -1,3 +1,27 @@
+////////////////////////////////////////////////////////////////////////////////
+// Main File:        n_in_a_row.c
+// This File:        n_in_a_row.c
+// Other Files:      None
+// Semester:         CS 354 Fall 2019
+//
+// Author:           Neil Leonard
+// Email:            nleonard5@wisc.edu
+// CS Login:         nleonard
+//
+/////////////////////////// OTHER SOURCES OF HELP //////////////////////////////
+//                   fully acknowledge and credit all sources of help,
+//                   other than Instructors and TAs.
+//
+// Persons:          Identify persons by name, relationship to you, and email.
+//                   Describe in detail the the ideas and help they provided.
+//
+// Online sources:   avoid web searches to solve your problems, but if you do
+//                   search, be sure to include Web URLs and description of 
+//                   of any information you find.
+//////////////////////////// 80 columns wide ///////////////////////////////////
+
+
+
 #include <stdio.h>  
 #include <stdlib.h>
 #include <string.h>     
@@ -48,7 +72,7 @@ int check_array(int* arr, int size){
     return 0;
 }
 
-/* TODO:
+/* DONE:
  * Returns 1 if and only if the board is in a valid state.
  * Otherwise returns 0.
  * 
@@ -122,10 +146,14 @@ int n_in_a_row(int **board, int size) {
 
                 }
                 else{
+                    free(hld);
+                    hld = NULL;
                     return 0;
                 }
             }
             else{
+                free(hld);
+                hld = NULL;
                 return 0;
             }
 
@@ -161,6 +189,7 @@ int n_in_a_row(int **board, int size) {
 		//hld2[i] = board[size - 1 - i][i];
 
 	}
+    printf("the row win is %d, the col win is %d\n",row_win, col_win);
     // check if they have a winner, with some extra logic
     // to make sure that we are adding a valid winner
 	if(check_array(hld, size) == 1){
@@ -223,6 +252,7 @@ int n_in_a_row(int **board, int size) {
         }
         
     }
+
     if(check_array(hld2, size) == 1){
         if(o_win == 0){
 
@@ -263,6 +293,7 @@ int n_in_a_row(int **board, int size) {
             }
             else{
                 if(row_win == (size - 1 - col_win)){
+                    printf("asdfasdf\n");
                     o_win++;
                 }
                 else{
@@ -287,6 +318,14 @@ int n_in_a_row(int **board, int size) {
     free(hld2);
     hld = NULL;
     hld2 = NULL; 
+
+    if(row_win == -1 && col_win == -1){
+        if(x_win > 1 | o_win > 1){
+            if(size%2 == 0){
+                return 0;
+            }
+        }
+    }
     // now lets add up how many of each x's and o's there
     // are so we know its valid 
     for(int i = 0; i < size; i++){
