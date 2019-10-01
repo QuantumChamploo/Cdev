@@ -136,6 +136,7 @@ int n_in_a_row(int **board, int size) {
 		for(int j = 0; j < size; j++){
 			*(hld + j) = *(*(board + j)+i);
 		}
+        //check x
 		if(check_array(hld, size) == 1){
             if(o_win == 0){
                 if(col_win == -1){
@@ -157,6 +158,7 @@ int n_in_a_row(int **board, int size) {
 
 			
 		}
+        //check o
         if(check_array(hld, size) == 2){
             if(x_win == 0){
                 if(col_win == -1){
@@ -164,16 +166,23 @@ int n_in_a_row(int **board, int size) {
                     col_win = i;
                 }
                 else{
+                    free(hld);
+                    hld = NULL;
                     return 0;
                 }
             }
             else{
+                free(hld);
+                hld = NULL;
                 return 0;
             }
             
         }
+        free(hld);
+        hld = NULL;
 	}
     // now we make the diagonal arrays
+
     // from top left to bottom right
 	int* hld = malloc(sizeof(int)*size);
     // bottom left to top right
@@ -189,10 +198,11 @@ int n_in_a_row(int **board, int size) {
     //printf("the row win is %d, the col win is %d\n",row_win, col_win);
     // check if they have a winner, with some extra logic
     // to make sure that we are adding a valid winner
+    // check x
 	if(check_array(hld, size) == 1){
         if(o_win == 0){
 
-            if(row_win == -1 | col_win == -1){
+            if((row_win == -1) | (col_win == -1)){
 
                 x_win++;
                 
@@ -219,16 +229,17 @@ int n_in_a_row(int **board, int size) {
         }
 		
 	}
+    // check o
     if(check_array(hld, size) == 2){
         if(x_win == 0){
 
-            if(row_win == -1 | col_win == -1){
+            if((row_win == -1) | (col_win == -1)){
 
                 o_win++;
                 
             }
             else{
-                if(row_win == col_win){
+                if((row_win) == (col_win)){
                     o_win++;
                 }
                 else{
@@ -249,11 +260,11 @@ int n_in_a_row(int **board, int size) {
         }
         
     }
-
+    // check the other diagonal x
     if(check_array(hld2, size) == 1){
         if(o_win == 0){
 
-            if(row_win == -1 | col_win == -1){
+            if((row_win == -1) | (col_win == -1)){
 
                 x_win++;
                 
@@ -280,10 +291,11 @@ int n_in_a_row(int **board, int size) {
         }
         
     }
+    // check th eother diagonal o
     if(check_array(hld2, size) == 2){
         if(x_win == 0){
 
-            if(row_win == -1 | col_win == -1){
+            if((row_win == -1) | (col_win == -1)){
 
                 o_win++;
                 
@@ -315,8 +327,12 @@ int n_in_a_row(int **board, int size) {
     hld = NULL;
     hld2 = NULL; 
 
+    // now we need to check for the double diagonal corner case,
+    //which only works for boards with exactly 2 wins, and odd
+    //dimensions
+
     if(row_win == -1 && col_win == -1){
-        if(x_win > 1 | o_win > 1){
+        if((x_win > 1) | (o_win > 1)){
             if(size%2 == 0){
                 return 0;
             }
@@ -360,7 +376,7 @@ int n_in_a_row(int **board, int size) {
 
 
 
-/* PARTIALLY COMPLETED:
+/* Complete:
  * This program prints Valid if the input file contains
  * a game board with either 1 or no winners; and where
  * there is at most 1 more X than O.
@@ -370,7 +386,7 @@ int n_in_a_row(int **board, int size) {
  */
 int main(int argc, char *argv[]) {              
 
-    //TODO: Check if number of command-line arguments is correct.
+    // check the number of args
     if(argc != 2){
         printf("improper number of args\n");
         exit(1);
@@ -387,15 +403,15 @@ int main(int argc, char *argv[]) {
     //Declare local variables.
     int size;
 
-	//TODO: Call get_dimensions to retrieve the board size.
+	//Complete Call get_dimensions to retrieve the board size.
     get_dimensions(fp, &size);
-   // printf("the size is %d\n", size);
+  
 
 
     
 
 
-    //TODO: Dynamically allocate a 2D array of dimensions retrieved above.
+    //Complete: Dynamically allocate a 2D array of dimensions retrieved above.
     int** m;
     m = malloc(sizeof(int*)*size);
     for(int i = 0; i < size; i++){
@@ -424,7 +440,7 @@ int main(int argc, char *argv[]) {
     }
 
 
-    //TODO: Call the function n_in_a_row and print the appropriate
+    //Complete: Call the function n_in_a_row and print the appropriate
     //output depending on the function's return value.
 
     int hld = n_in_a_row(m, size);
@@ -440,7 +456,7 @@ int main(int argc, char *argv[]) {
 
 
 
-    //TODO: Free all dynamically allocated memory.
+    //Complete: Free all dynamically allocated memory.
     for(int i = 0; i < size; i++){
 
     	free(m[i]);
