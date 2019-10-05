@@ -20,7 +20,7 @@ int main(){
 
 	Teammate player1 = {"joe","doe","forward"};
 	team -> roster[0] = player1;
-	printf("the first players last name is %s\n", (*(*team).roster).lastname);
+	printf("the first players last name is %s\n", (*team->roster).lastname);
 
 	return 0;
 }
