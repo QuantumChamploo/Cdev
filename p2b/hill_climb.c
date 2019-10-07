@@ -29,6 +29,8 @@
 #include <stdlib.h>     
 #include <string.h>  
 
+char *COMMA = ",";
+
 /*
  * USE THIS:
  * Structure representing the Matrix
@@ -52,7 +54,129 @@ typedef struct {
  */
 void get_dimensions(FILE *infp, int *nRows, int *nCols) {         
     // Read the dimensions on the first line from infp
-}            
+
+    char *line = NULL;
+    size_t len = 0;
+    if(getline(&line, &len,infp) == -1){
+        printf("Error in reading the file\n");
+        exit(1);
+    }
+    char *token1 = NULL;
+    token1 = strtok(line, COMMA);
+    *nRows = atoi(token1);
+
+    token1 = strtok(NULL, COMMA);
+    *nCols = atoi(token1);
+
+} 
+
+// helper function that will look at a structure and will ask
+// 8 questions (for the potential 8 neighboring points) and return
+// the indices for the highest neighboring square
+int find_next(Matrix *mstruct, int *row, int *col){
+    int **mat = mstruct->matrix;
+    int matRows = mstruct->numRows;
+    int matCols = mstruct->numCols;
+    int cur_high = mat[*row][*col];
+
+    int rtrn_row = *row;
+    int rtrn_col = *col;
+    printf("the current high is %i\n", cur_high);
+    printf("the row is %d and the col is %d", *row, *col);
+    // top left 
+
+    if(*row != 0){
+        if(*col != 0){
+            if(*(*(mat + *row - 1)+ *col - 1) > cur_high){
+                cur_high = *(*(mat + *row - 1)+ *col - 1);
+                rtrn_row = *row - 1;
+                rtrn_col = *col - 1;
+                printf("topleft\n");
+            }
+        }
+    }
+    // directly above
+    if(*row != 0){
+        if(*(*(mat + *row - 1) + *col) > cur_high){
+            cur_high = *(*(mat + *row - 1) + *col);
+            rtrn_row = *row -1;
+            rtrn_col = *col;
+            printf("directly above\n");
+        }
+    }
+    // top right
+    if(*row != 0){
+        if(*col < matCols -1){
+            if(*(*(mat + *row - 1) + *col + 1) > cur_high){
+                cur_high = *(*(mat + *row - 1) + *col + 1);
+                rtrn_row = *row - 1;
+                rtrn_col = *col + 1;
+                printf("%s\n", "top right" );
+            }
+        }
+    }
+
+    // directly right
+    if(*col < matCols - 1){
+        if(*(*(mat + *row ) + *col + 1) > cur_high){
+            cur_high = *(*(mat + *row ) + *col + 1);
+            rtrn_row = *row;
+            rtrn_col = *col + 1;
+            printf("%s\n", "directly right");
+
+        }
+    }
+
+    //lower left
+    if(*col < matCols - 1){
+        if(*row < matRows - 1){
+            if(*(*(mat + *row + 1) + *col + 1) > cur_high){
+                cur_high = *(*(mat + *row + 1) + *col + 1);
+                rtrn_row = *row + 1;
+                rtrn_col = *col + 1;
+                printf("%s\n", "lower left");
+
+            }
+        }
+    }
+    // directly below
+    if(*row < matRows - 1){
+        if(*(*(mat + *row +1) + *col) > cur_high){
+            cur_high = *(*(mat + *row +1) + *col);
+            rtrn_row = *row +1;
+            rtrn_col = *col;
+            printf("%s\n", "directly below");
+        }
+
+    }
+    //bottom left
+    if( *row < matRows - 1){
+        if(*col != 0){
+            if(*(*(mat + *row + 1) + *col - 1) > cur_high){
+                cur_high = *(*(mat + *row + 1) + *col - 1);
+                rtrn_row = *row + 1;
+                rtrn_col = *col - 1;
+                printf("bottom left");
+            }
+        }
+    }
+    // directly left
+    if(*col != 0){
+        if(*(*(mat + *row) + *col - 1) > cur_high){
+            cur_high = *(*(mat + *row) + *col - 1);
+            rtrn_row = *row;
+            rtrn_col = *col - 1;
+            printf("%s\n", "directly left");
+        }
+    }
+    
+
+    printf("the next highest value is: %i\n at row %i\n at col %i\n", *(*(mat + rtrn_row) + rtrn_col), rtrn_row, rtrn_col);
+    *row = rtrn_row;
+    *col = rtrn_col;
+
+    return 0;
+}           
 
 /* TODO:
  * Continually find and print the largest neighbor
@@ -68,6 +192,48 @@ void hill_climb(FILE *outfp, Matrix *mstruct) {
     // Move to that position  
     // Write that number to outfp
     // Repeat until you can't find anything larger (you may use any loop)
+    int **mat = mstruct->matrix;
+    int matRows = mstruct->numRows;
+    int matCols = mstruct->numCols;
+    int highRow = 0;
+    int highCol = 0;
+    int *hldRow = malloc(sizeof(int));
+    int *hldCol = malloc(sizeof(int));
+
+    *hldRow = 0;
+    *hldCol = 0;
+    // write in mat[0][0]
+    fprintf(outfp,"%d ", **mat);
+
+    while(0 == 0){
+        find_next(mstruct,hldRow, hldCol);
+        if((*hldRow != highRow) | (*hldCol != highCol)){
+            highRow = *hldRow;
+            highCol = *hldCol;
+            //write in mat[highRow][highCol]
+            fprintf(outfp,"%d ", mat[highRow][highCol]);
+        }
+        else{
+            break;
+        }
+    }
+    //find_next(mstruct,hldCol, hldRow);
+    /*
+    while((*hldRow != highRow) | (*hldCol != highCol)){
+        highRow = *hldRow;
+        highCol = *hldCol;
+
+        find_next(mstruct,hldCol, hldRow);
+        if((*hldRow == highRow) && (*hldCol == highCol)){
+
+        }
+        
+
+
+
+    } */
+
+
 }    
 
 /* TODO:
@@ -81,16 +247,86 @@ void hill_climb(FILE *outfp, Matrix *mstruct) {
 int main(int argc, char *argv[]) {
     // Check if number of command-line arguments is correct
     // Open the input file and check if it opened successfully
+    FILE *infp = fopen(*(argv + 1), "r");
+    if(infp == NULL){
+        printf("Cannot open file for reading\n");
+        exit(1);
+    }
     // Declare local variables including the Matrix structure 
+    int nRows, nCols;
+    int **m;
     // Call the function get_dimensions
+    get_dimensions(infp, &nRows, &nCols);
+    printf("%i, %i\n", nRows, nCols);
     // Dynamically allocate a 2D array in the Matrix structure
+    m = malloc(sizeof(int*)*nRows);
+    for(int i = 0; i < nRows; i++){
+        *(m + i) = malloc(sizeof(int)*nCols);
+    }
     // Read the file line by line base on the number of rows
+    char *line = NULL;
+    size_t len = 0;
+    char *token = NULL;
+    for(int i = 0; i < nRows; i++){
+        if(getline(&line,&len,infp) == -1){
+            printf("Error while reading the file\n");
+            exit(1);
+        }
+        token = strtok(line, COMMA);
+        for(int j = 0; j < nCols; j++){
+            *(*(m +i) + j) = atoi(token);
+            token = strtok(NULL, COMMA);
+        }
+    }
+    for(int i = 0; i < nRows; i++){
+        for(int j = 0; j < nCols; j++){
+           // printf("%i\n", *(*(m +i) + j));
+        }
+    }
+    printf("loading matrix \n");
+    Matrix mat;
+    mat.numRows = nRows;
+    mat.numCols = nCols;
+    mat.matrix = m;
+    for(int i = 0; i < nRows; i++){
+        for(int j = 0; j < nCols; j++){
+            printf("%i\n", *(*(mat.matrix +i) + j));
+        }
+    }
+
+    /*
+    int *p = malloc(sizeof(int));
+    *p = 0;
+    int *q = malloc(sizeof(int));
+    *q = 0;
+    */
+
+    //find_next(&mat,p,q);
+
+
+
+
     // Tokenize each line wrt comma to store the values in the matrix
     // Open the output file  
+    FILE *outfp = fopen(*(argv + 2), "a");
+    if(outfp == NULL){
+        printf("Cannot open file for writing\n");
+        exit(1);
+    }
     // Call the function hill_climb
+    hill_climb(outfp, &mat);
     // Free the dynamically allocated memory
+    for(int i = 0; i < nRows; i++){
+        free(*(m + i));
+        *(m + i) = NULL;
+    }
+    free(m);
+    m = NULL;
+
     // Close the input file  
+    fclose(infp);
     // Close the output file
+    fclose(outfp);
 
     return 0; 
 }   
