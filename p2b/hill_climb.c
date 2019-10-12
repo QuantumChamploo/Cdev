@@ -1,17 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2019 Jim Skrentny
-// Posting or sharing this file is prohibited, including any changes/additions.
-//
-///////////////////////////////////////////////////////////////////////////////
-// Main File:        (name of file with main function)
-// This File:        (name of this file)
-// Other Files:      (name of all other files if any)
+// Main File:        hill_climb.c
+// This File:        hill_climb.c
+// Other Files:      None
 // Semester:         CS 354 Fall 2019
 //
-// Author:           (your name)
-// Email:            (your wisc email address)
-// CS Login:         (your CS login name)
+// Author:           Neil Leonard
+// Email:            nleonard5@wisc.edu
+// CS Login:         nleonard
 //
 /////////////////////////// OTHER SOURCES OF HELP /////////////////////////////
 //                   fully acknowledge and credit all sources of help,
@@ -44,7 +39,7 @@ typedef struct {
     int **matrix;
 } Matrix;
 
-/* TODO:
+/* Done:
  * Get the dimensions of the matrix that are on
  * the first line of the input file.
  * 
@@ -77,12 +72,11 @@ int find_next(Matrix *mstruct, int *row, int *col){
     int **mat = mstruct->matrix;
     int matRows = mstruct->numRows;
     int matCols = mstruct->numCols;
-    int cur_high = mat[*row][*col];
+    int cur_high = *(*(mat + *row) + *col);
 
     int rtrn_row = *row;
     int rtrn_col = *col;
-    printf("the current high is %i\n", cur_high);
-    printf("the row is %d and the col is %d", *row, *col);
+
     // top left 
 
     if(*row != 0){
@@ -91,7 +85,6 @@ int find_next(Matrix *mstruct, int *row, int *col){
                 cur_high = *(*(mat + *row - 1)+ *col - 1);
                 rtrn_row = *row - 1;
                 rtrn_col = *col - 1;
-                printf("topleft\n");
             }
         }
     }
@@ -101,7 +94,6 @@ int find_next(Matrix *mstruct, int *row, int *col){
             cur_high = *(*(mat + *row - 1) + *col);
             rtrn_row = *row -1;
             rtrn_col = *col;
-            printf("directly above\n");
         }
     }
     // top right
@@ -111,7 +103,6 @@ int find_next(Matrix *mstruct, int *row, int *col){
                 cur_high = *(*(mat + *row - 1) + *col + 1);
                 rtrn_row = *row - 1;
                 rtrn_col = *col + 1;
-                printf("%s\n", "top right" );
             }
         }
     }
@@ -122,7 +113,6 @@ int find_next(Matrix *mstruct, int *row, int *col){
             cur_high = *(*(mat + *row ) + *col + 1);
             rtrn_row = *row;
             rtrn_col = *col + 1;
-            printf("%s\n", "directly right");
 
         }
     }
@@ -134,7 +124,6 @@ int find_next(Matrix *mstruct, int *row, int *col){
                 cur_high = *(*(mat + *row + 1) + *col + 1);
                 rtrn_row = *row + 1;
                 rtrn_col = *col + 1;
-                printf("%s\n", "lower left");
 
             }
         }
@@ -145,7 +134,7 @@ int find_next(Matrix *mstruct, int *row, int *col){
             cur_high = *(*(mat + *row +1) + *col);
             rtrn_row = *row +1;
             rtrn_col = *col;
-            printf("%s\n", "directly below");
+
         }
 
     }
@@ -156,7 +145,7 @@ int find_next(Matrix *mstruct, int *row, int *col){
                 cur_high = *(*(mat + *row + 1) + *col - 1);
                 rtrn_row = *row + 1;
                 rtrn_col = *col - 1;
-                printf("bottom left");
+
             }
         }
     }
@@ -166,19 +155,19 @@ int find_next(Matrix *mstruct, int *row, int *col){
             cur_high = *(*(mat + *row) + *col - 1);
             rtrn_row = *row;
             rtrn_col = *col - 1;
-            printf("%s\n", "directly left");
+
         }
     }
     
 
-    printf("the next highest value is: %i\n at row %i\n at col %i\n", *(*(mat + rtrn_row) + rtrn_col), rtrn_row, rtrn_col);
+
     *row = rtrn_row;
     *col = rtrn_col;
 
     return 0;
 }           
 
-/* TODO:
+/* Done:
  * Continually find and print the largest neighbor
  * that is also larger than the current position
  * until nothing larger is found.       
@@ -193,50 +182,41 @@ void hill_climb(FILE *outfp, Matrix *mstruct) {
     // Write that number to outfp
     // Repeat until you can't find anything larger (you may use any loop)
     int **mat = mstruct->matrix;
-    int matRows = mstruct->numRows;
-    int matCols = mstruct->numCols;
+    // the highest row and col
     int highRow = 0;
     int highCol = 0;
+    // dummie row and col variables to compare with 
     int *hldRow = malloc(sizeof(int));
     int *hldCol = malloc(sizeof(int));
 
     *hldRow = 0;
     *hldCol = 0;
-    // write in mat[0][0]
-    fprintf(outfp,"%d ", **mat);
 
+    fprintf(outfp,"%d ", **mat);
+    // not the best implemetaton, but almost all have the ability to create
+    // infinite loops
     while(0 == 0){
+    	// find next highest
         find_next(mstruct,hldRow, hldCol);
+        // see if its different
         if((*hldRow != highRow) | (*hldCol != highCol)){
             highRow = *hldRow;
             highCol = *hldCol;
-            //write in mat[highRow][highCol]
-            fprintf(outfp,"%d ", mat[highRow][highCol]);
+            // write into the output file *(*(mat + highRow ) + highCol)
+            fprintf(outfp,"%d ", *(*(mat + highRow ) + highCol));
         }
         else{
+        	// free the allocated mem
+        	free(hldRow);
+        	free(hldCol);
+        	// couldnt find another so lets leave the loop
             break;
         }
     }
-    //find_next(mstruct,hldCol, hldRow);
-    /*
-    while((*hldRow != highRow) | (*hldCol != highCol)){
-        highRow = *hldRow;
-        highCol = *hldCol;
-
-        find_next(mstruct,hldCol, hldRow);
-        if((*hldRow == highRow) && (*hldCol == highCol)){
-
-        }
-        
-
-
-
-    } */
-
 
 }    
 
-/* TODO:
+/* Done:
  * This program reads an m by n matrix from the input file
  * and outputs to a file the path determined from the
  * hill climb algorithm.    
@@ -257,7 +237,7 @@ int main(int argc, char *argv[]) {
     int **m;
     // Call the function get_dimensions
     get_dimensions(infp, &nRows, &nCols);
-    printf("%i, %i\n", nRows, nCols);
+
     // Dynamically allocate a 2D array in the Matrix structure
     m = malloc(sizeof(int*)*nRows);
     for(int i = 0; i < nRows; i++){
@@ -280,34 +260,21 @@ int main(int argc, char *argv[]) {
     }
     for(int i = 0; i < nRows; i++){
         for(int j = 0; j < nCols; j++){
-           // printf("%i\n", *(*(m +i) + j));
+
         }
     }
-    printf("loading matrix \n");
+
     Matrix mat;
     mat.numRows = nRows;
     mat.numCols = nCols;
     mat.matrix = m;
-    for(int i = 0; i < nRows; i++){
-        for(int j = 0; j < nCols; j++){
-            printf("%i\n", *(*(mat.matrix +i) + j));
-        }
-    }
-
-    /*
-    int *p = malloc(sizeof(int));
-    *p = 0;
-    int *q = malloc(sizeof(int));
-    *q = 0;
-    */
-
-    //find_next(&mat,p,q);
-
-
 
 
     // Tokenize each line wrt comma to store the values in the matrix
     // Open the output file  
+    // Note about implementation. I used "a" to let me write as I go. This 
+    // assumes a blank or absent file. This should be fine by the definitions
+    // in the specifications
     FILE *outfp = fopen(*(argv + 2), "a");
     if(outfp == NULL){
         printf("Cannot open file for writing\n");
